@@ -11,5 +11,4 @@ export async function handlerMetrics(req: Request, res: Response) {
       </body>
     </html>
     `);
-  res.end();
 }

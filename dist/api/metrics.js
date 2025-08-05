@@ -9,5 +9,4 @@ export async function handlerMetrics(req, res) {
       </body>
     </html>
     `);
-    res.end();
 }
