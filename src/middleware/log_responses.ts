@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-export async function middlewareLogResponses(
+export function middlewareLogResponses(
   req: Request,
   res: Response,
   next: NextFunction,

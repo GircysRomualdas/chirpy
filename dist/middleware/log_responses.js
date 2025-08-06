@@ -1,4 +1,4 @@
-export async function middlewareLogResponses(req, res, next) {
+export function middlewareLogResponses(req, res, next) {
     res.on("finish", () => {
         const statusCode = res.statusCode;
         if (statusCode > 299) {
