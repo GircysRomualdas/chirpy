@@ -1,16 +1,23 @@
 import express from "express";
+import postgres from "postgres";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import { drizzle } from "drizzle-orm/postgres-js";
 
 import { handlerReadiness } from "./api/readiness.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
 import { handlerValidateChirp } from "./api/validate_chirp.js";
+import { handlerCreateUser } from "./api/users.js";
 
 import { middlewareLogResponses } from "./middleware/log_responses.js";
 import { middlewareMetricsInc } from "./middleware/metrics.js";
 import { middlewareErrorHandler } from "./middleware/error_handler.js";
+import { config } from "./config.js";
+
+const migrationClient = postgres(config.db.url, { max: 1 });
+await migrate(drizzle(migrationClient), config.db.migrationConfig);
 
 const app = express();
-const PORT = 8080;
 
 app.use(middlewareLogResponses);
 app.use(express.json());
@@ -20,11 +27,13 @@ app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 app.get("/api/healthz", handlerReadiness);
 app.post("/api/validate_chirp", handlerValidateChirp);
 
+app.post("/api/users", handlerCreateUser);
+
 app.get("/admin/metrics", handlerMetrics);
 app.post("/admin/reset", handlerReset);
 
 app.use(middlewareErrorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(config.api.port, () => {
+  console.log(`Server is running on port ${config.api.port}`);
 });

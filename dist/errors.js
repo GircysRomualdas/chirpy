@@ -3,12 +3,12 @@ export class BadRequestError extends Error {
         super(message);
     }
 }
-export class UnauthorizedError extends Error {
+export class UserNotAuthorizedError extends Error {
     constructor(message) {
         super(message);
     }
 }
-export class ForbiddenError extends Error {
+export class UserForbiddenError extends Error {
     constructor(message) {
         super(message);
     }

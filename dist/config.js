@@ -1,8 +1,22 @@
-process.loadEnvFile(".env");
-if (!process.env.DB_URL) {
-    throw new Error("Missing environment variable: DB_URL");
+process.loadEnvFile();
+function envOrThrow(key) {
+    const value = process.env[key];
+    if (!value) {
+        throw new Error(`Environment variable ${key} is not set`);
+    }
+    return value;
 }
+const migrationConfig = {
+    migrationsFolder: "./src/db/migrations",
+};
 export const config = {
-    fileserverHits: 0,
-    dbURL: process.env.DB_URL,
+    api: {
+        fileServerHits: 0,
+        port: Number(envOrThrow("PORT")),
+        platform: envOrThrow("PLATFORM"),
+    },
+    db: {
+        url: envOrThrow("DB_URL"),
+        migrationConfig: migrationConfig,
+    },
 };

@@ -1,5 +1,5 @@
 import { respondWithError } from "../json.js";
-import { BadRequestError, UnauthorizedError, ForbiddenError, NotFoundError, } from "../errors.js";
+import { BadRequestError, UserNotAuthorizedError, UserForbiddenError, NotFoundError, } from "../errors.js";
 export function middlewareErrorHandler(err, req, res, next) {
     let statusCode = 500;
     let message = "Something went wrong on our end";
@@ -7,11 +7,11 @@ export function middlewareErrorHandler(err, req, res, next) {
         statusCode = 400;
         message = err.message;
     }
-    else if (err instanceof UnauthorizedError) {
+    else if (err instanceof UserNotAuthorizedError) {
         statusCode = 401;
         message = err.message;
     }
-    else if (err instanceof ForbiddenError) {
+    else if (err instanceof UserForbiddenError) {
         statusCode = 403;
         message = err.message;
     }

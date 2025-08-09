@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { respondWithError } from "../json.js";
 import {
   BadRequestError,
-  UnauthorizedError,
-  ForbiddenError,
+  UserNotAuthorizedError,
+  UserForbiddenError,
   NotFoundError,
 } from "../errors.js";
 
@@ -19,10 +19,10 @@ export function middlewareErrorHandler(
   if (err instanceof BadRequestError) {
     statusCode = 400;
     message = err.message;
-  } else if (err instanceof UnauthorizedError) {
+  } else if (err instanceof UserNotAuthorizedError) {
     statusCode = 401;
     message = err.message;
-  } else if (err instanceof ForbiddenError) {
+  } else if (err instanceof UserForbiddenError) {
     statusCode = 403;
     message = err.message;
   } else if (err instanceof NotFoundError) {
