@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request } from "express";
 import { UserNotAuthorizedError, BadRequestError } from "./errors.js";
@@ -59,16 +60,20 @@ export function validateJWT(tokenString: string, secret: string) {
 export function getBearerToken(req: Request) {
   const authHeader = req.get("Authorization");
   if (!authHeader) {
-    throw new BadRequestError("Malformed authorization header");
+    throw new UserNotAuthorizedError("Invalid authorization header");
   }
 
   return extractBearerToken(authHeader);
 }
 
-export function extractBearerToken(header: string) {
+function extractBearerToken(header: string) {
   const splitAuth = header.split(" ");
   if (splitAuth.length < 2 || splitAuth[0] !== "Bearer") {
-    throw new BadRequestError("Malformed authorization header");
+    throw new BadRequestError("Invalid authorization header");
   }
   return splitAuth[1];
+}
+
+export function makeRefreshToken(): string {
+  return crypto.randomBytes(32).toString("hex");
 }

@@ -3,11 +3,7 @@ import { asc, eq } from "drizzle-orm";
 import { NewChirp, chirps } from "../schema.js";
 
 export async function createChirp(chirp: NewChirp) {
-  const [result] = await db
-    .insert(chirps)
-    .values(chirp)
-    .onConflictDoNothing()
-    .returning();
+  const [result] = await db.insert(chirps).values(chirp).returning();
   return result;
 }
 
