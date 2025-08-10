@@ -13,6 +13,7 @@ import {
 import { respondWithJSON } from "../json.js";
 import { getBearerToken, validateJWT } from "../auth.js";
 import { config } from "../config.js";
+import { getUserById } from "../db/queries/users.js";
 
 export async function handlerCreateChirp(req: Request, res: Response) {
   type parameters = {
@@ -33,11 +34,6 @@ export async function handlerCreateChirp(req: Request, res: Response) {
     body: chirp.body,
     userId: chirp.userId,
   });
-}
-
-export async function handlerGetAllChirps(req: Request, res: Response) {
-  const chirps = await getAllChirps();
-  respondWithJSON(res, 200, chirps);
 }
 
 export async function handlerChirpsGet(req: Request, res: Response) {
@@ -87,4 +83,23 @@ export async function handlerChirpsDelete(req: Request, res: Response) {
   }
   await deleteChirp(chirpId);
   res.status(204).send();
+}
+
+export async function handlerGetChirps(req: Request, res: Response) {
+  const sortParam =
+    typeof req.query.sort === "string" ? req.query.sort.toLowerCase() : "";
+  const order: "asc" | "desc" = sortParam === "desc" ? "desc" : "asc";
+  const chirps = await getAllChirps(order);
+
+  let authorId = "";
+  let authorIdQuery = req.query.authorId;
+  if (typeof authorIdQuery === "string") {
+    authorId = authorIdQuery;
+  }
+
+  const filteredChirps = chirps.filter(
+    (chirp) => chirp.userId === authorId || authorId === "",
+  );
+
+  respondWithJSON(res, 200, filteredChirps);
 }

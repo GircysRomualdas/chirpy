@@ -10,9 +10,9 @@ import { handlerCreateUser, handlerUpdateUser } from "./api/users.js";
 import { handlerLogin, handlerRefresh, handlerRevoke } from "./api/auth.js";
 import {
   handlerCreateChirp,
-  handlerGetAllChirps,
   handlerChirpsGet,
   handlerChirpsDelete,
+  handlerGetChirps,
 } from "./api/chirps.js";
 import { handlerPolkaWebhooks } from "./api/polka.js";
 import { middlewareLogResponses } from "./middleware/log_responses.js";
@@ -40,7 +40,7 @@ app.post("/api/users", handlerCreateUser);
 app.put("/api/users", handlerUpdateUser);
 
 app.post("/api/chirps", handlerCreateChirp);
-app.get("/api/chirps", handlerGetAllChirps);
+app.get("/api/chirps", handlerGetChirps);
 app.get("/api/chirps/:chirpId", handlerChirpsGet);
 app.delete("/api/chirps/:chirpId", handlerChirpsDelete);
 
