@@ -1,12 +1,16 @@
 import { BadRequestError, NotFoundError } from "../errors.js";
 import { createChirp, getAllChirps, getChirpById, } from "../db/queries/chirps.js";
 import { respondWithJSON } from "../json.js";
+import { getBearerToken, validateJWT } from "../auth.js";
+import { config } from "../config.js";
 export async function handlerCreateChirp(req, res) {
     const params = req.body;
+    const token = getBearerToken(req);
+    const userId = validateJWT(token, config.api.jwtSecret);
     const validChirp = validateChirp(params.body);
     const chirp = await createChirp({
         body: validChirp,
-        userId: params.userId,
+        userId: userId,
     });
     respondWithJSON(res, 201, {
         id: chirp.id,

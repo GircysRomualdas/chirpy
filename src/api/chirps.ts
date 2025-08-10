@@ -6,17 +6,20 @@ import {
   getChirpById,
 } from "../db/queries/chirps.js";
 import { respondWithJSON } from "../json.js";
+import { getBearerToken, validateJWT } from "../auth.js";
+import { config } from "../config.js";
 
 export async function handlerCreateChirp(req: Request, res: Response) {
   type parameters = {
     body: string;
-    userId: string;
   };
   const params: parameters = req.body;
+  const token = getBearerToken(req);
+  const userId = validateJWT(token, config.api.jwtSecret);
   const validChirp = validateChirp(params.body);
   const chirp = await createChirp({
     body: validChirp,
-    userId: params.userId,
+    userId: userId,
   });
   respondWithJSON(res, 201, {
     id: chirp.id,

@@ -2,12 +2,14 @@ import { Request, Response } from "express";
 import { respondWithJSON } from "../json.js";
 import { getUserByEmail } from "../db/queries/users.js";
 import { UserNotAuthorizedError, NotFoundError } from "../errors.js";
-import { checkPasswordHash } from "../auth.js";
+import { checkPasswordHash, makeJWT } from "../auth.js";
+import { config } from "../config.js";
 
 export async function handlerLogin(req: Request, res: Response) {
   type parameters = {
     email: string;
     password: string;
+    expiresInSeconds: number;
   };
   const params: parameters = req.body;
   const user = await getUserByEmail(params.email);
@@ -21,10 +23,16 @@ export async function handlerLogin(req: Request, res: Response) {
   if (!matching) {
     throw new UserNotAuthorizedError("Incorrect email or password");
   }
+  let expiresIn = 3600;
+  if (params.expiresInSeconds > 0 && params.expiresInSeconds < 3600) {
+    expiresIn = params.expiresInSeconds;
+  }
+  const jwtToken = makeJWT(user.id, expiresIn, config.api.jwtSecret);
   respondWithJSON(res, 200, {
     id: user.id,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     email: user.email,
+    token: jwtToken,
   });
 }

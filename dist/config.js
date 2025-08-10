@@ -14,6 +14,7 @@ export const config = {
         fileServerHits: 0,
         port: Number(envOrThrow("PORT")),
         platform: envOrThrow("PLATFORM"),
+        jwtSecret: envOrThrow("JWT_SECRET"),
     },
     db: {
         url: envOrThrow("DB_URL"),
